@@ -5,8 +5,8 @@ import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin, useGSAP);
 
-export const motionQuery = 'all';
-export const desktopMotionQuery = '(min-width: 801px)';
+export const motionQuery = '(prefers-reduced-motion: no-preference)';
+export const desktopMotionQuery = '(min-width: 801px) and (prefers-reduced-motion: no-preference)';
 
 export function clearMotionStyles(targets) {
   gsap.set(targets, { clearProps: 'opacity,transform,clipPath,height,overflow' });

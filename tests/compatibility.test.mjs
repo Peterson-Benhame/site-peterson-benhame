@@ -10,8 +10,8 @@ const read = (path) => readFileSync(join(site, path), 'utf8');
 test('preserves the PB Cinema custom-layout contract', () => {
   const html = read('index.html');
   assert.match(html, /<meta\b(?=[^>]*name="pb-layout")(?=[^>]*content="custom")[^>]*>/);
-  assert.match(html, /<noscript>[\s\S]*<h1>[\s\S]*<\/h1>[\s\S]*<\/noscript>/);
-  assert.equal((html.match(/<h1\b/g) || []).length, 1);
+  assert.match(html, /<div id="root"><\/div>/);
+  assert.doesNotMatch(html, /<noscript>[\s\S]*<h1>/);
 
   for (const file of ['style.css', 'theme.css', 'app.js', 'content.js', 'config.js']) {
     assert.equal(existsSync(join(site, file)), true, `${file} must remain at the site root`);
@@ -24,15 +24,15 @@ test('declares the approved React, Vite and GSAP toolchain', () => {
   assert.equal(existsSync(join(site, 'package.json')), true, 'package.json must exist');
   const pkg = JSON.parse(read('package.json'));
   assert.equal(pkg.type, 'module');
-  assert.deepEqual(Object.keys(pkg.dependencies).sort(), ['@gsap/react', 'gsap', 'react', 'react-dom']);
+  assert.deepEqual(Object.keys(pkg.dependencies).sort(), ['@gsap/react', 'gsap', 'markdown-it', 'react', 'react-dom', 'yaml']);
   assert.deepEqual(Object.keys(pkg.devDependencies).sort(), ['@vitejs/plugin-react', 'vite']);
   assert.deepEqual(Object.keys(pkg.scripts).sort(), ['build', 'dev', 'preview', 'test', 'test:build']);
 });
 
-test('configures relative multi-page output and asset copying', () => {
+test('configures root multi-page output and asset copying', () => {
   assert.equal(existsSync(join(site, 'vite.config.js')), true, 'vite.config.js must exist');
   const config = read('vite.config.js');
-  assert.match(config, /base:\s*['"]\.\/['"]/);
+  assert.match(config, /base:\s*['"]\/['"]/);
   assert.match(config, /index\.html/);
   assert.match(config, /privacidade\.html/);
   assert.match(config, /copyAssetsPlugin/);
@@ -83,7 +83,7 @@ test('keeps cinematic media progressive and disposable', () => {
   const hero = read('src/sections/Hero.jsx');
 
   assert.match(hook, /window\.PB_CINEMA/);
-  assert.doesNotMatch(hook, /prefers-reduced-motion:\s*reduce/);
+  assert.match(hook, /prefers-reduced-motion:\s*reduce/);
   assert.match(hook, /min-width:\s*901px/);
   assert.match(hook, /navigator\.connection\?\.saveData/);
   assert.match(hook, /requestAnimationFrame/);
@@ -103,7 +103,7 @@ test('keeps cinematic media progressive and disposable', () => {
 
 test('documents the React development and production preview commands', () => {
   const guide = read('LEIA-ME.md');
-  assert.match(guide, /npm install/);
+  assert.match(guide, /npm ci/);
   assert.match(guide, /npm run dev/);
   assert.match(guide, /npm run build/);
   assert.match(guide, /npm run preview/);

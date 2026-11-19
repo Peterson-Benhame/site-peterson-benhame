@@ -168,6 +168,10 @@ em {
   color: var(--accent);
 }
 
+.mobile-blog-link {
+  display: none;
+}
+
 .header-cta {
   font-size: 12px;
   display: flex;
@@ -1597,6 +1601,12 @@ details[open] summary {
 }
 
 @media (max-width:600px) {
+  .mobile-blog-link {
+    display: inline;
+    color: var(--accent);
+    font-size: 11px;
+    white-space: nowrap;
+  }
   :root {
     --gutter: 24px;
   }

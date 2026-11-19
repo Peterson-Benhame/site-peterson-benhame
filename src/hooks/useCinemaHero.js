@@ -40,6 +40,7 @@ export function useCinemaHero({ heroRef, canvasRef, posterRef, illustrationRef, 
     if (!context) return undefined;
 
     const desktop = matchMedia('(min-width: 901px)');
+    const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
     const cache = new Map();
     const inflight = new Set();
     let enabled = false;
@@ -126,7 +127,7 @@ export function useCinemaHero({ heroRef, canvasRef, posterRef, illustrationRef, 
     };
 
     const mode = () => {
-      enabled = desktop.matches && !navigator.connection?.saveData;
+      enabled = desktop.matches && !reducedMotion.matches && !navigator.connection?.saveData;
       generation += 1;
       cache.clear();
       inflight.clear();
@@ -135,6 +136,7 @@ export function useCinemaHero({ heroRef, canvasRef, posterRef, illustrationRef, 
     };
 
     desktop.addEventListener('change', mode);
+    reducedMotion.addEventListener('change', mode);
     addEventListener('scroll', schedule, { passive: true });
     addEventListener('resize', schedule, { passive: true });
     mode();
@@ -143,6 +145,7 @@ export function useCinemaHero({ heroRef, canvasRef, posterRef, illustrationRef, 
       generation += 1;
       if (frameRequest) cancelAnimationFrame(frameRequest);
       desktop.removeEventListener('change', mode);
+      reducedMotion.removeEventListener('change', mode);
       removeEventListener('scroll', schedule);
       removeEventListener('resize', schedule);
       poster.removeEventListener('load', showPoster);

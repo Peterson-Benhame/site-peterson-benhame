@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import { gsap, motionQuery, useGSAP } from '../animations/gsapSetup.js';
 import { formConfig } from '../config/form.js';
 import { sendApplication, validateApplication } from '../lib/applicationForm.js';
+import { trackEvent } from '../lib/analytics.js';
 
 const fieldNames = ['nome', 'email', 'startup', 'estagio', 'problema', 'objetivo'];
 
@@ -11,6 +12,7 @@ export default function Application() {
   const [status, setStatus] = useState({ message: '', state: '' });
   const [sending, setSending] = useState(false);
   const statusRef = useRef(null);
+  const startedRef = useRef(false);
 
   useGSAP(() => {
     const media = gsap.matchMedia();
@@ -64,6 +66,7 @@ export default function Application() {
     setStatus({ message: 'Enviando sua candidatura…', state: 'sending' });
     try {
       await sendApplication(data, formConfig);
+      trackEvent('application_submitted');
       form.reset();
       setStatus({ message: 'Candidatura enviada. Peterson analisará as informações e entrará em contato pelo e-mail informado.', state: 'success' });
       statusRef.current?.focus();
@@ -97,7 +100,7 @@ export default function Application() {
           </div>
           <a className="application-copy-motion contact-email" href="mailto:mentoria@petersonbenhame.com.br">mentoria@petersonbenhame.com.br</a>
         </div>
-        <form aria-busy={sending || undefined} aria-describedby="form-availability" className="application-panel" id="application-form" noValidate onSubmit={handleSubmit}>
+        <form aria-busy={sending || undefined} aria-describedby="form-availability" className="application-panel" id="application-form" noValidate onFocusCapture={() => { if (!startedRef.current) { startedRef.current = true; trackEvent('application_start'); } }} onSubmit={handleSubmit}>
           <h3>Candidatura à mentoria</h3>
           <p className="form-lead">Primeiro, um pouco sobre você e sua ideia.</p>
           <p className="availability" hidden={formConfig.enabled && Boolean(formConfig.endpoint)} id="form-availability">
@@ -142,7 +145,7 @@ export default function Application() {
             <label htmlFor="website">Deixe em branco</label>
             <input autoComplete="off" id="website" name="_honey" tabIndex="-1" />
           </div>
-          <p className="privacy-note">Suas informações serão usadas para analisar a candidatura e entrar em contato sobre a mentoria. <a href="privacidade.html">Saiba como seus dados são tratados.</a></p>
+          <p className="privacy-note">Suas informações serão usadas para analisar a candidatura e entrar em contato sobre a mentoria. <a href="/privacidade.html">Saiba como seus dados são tratados.</a></p>
           <button className="button submit-button" disabled={sending || !formConfig.enabled || !formConfig.endpoint} type="submit">
             Enviar candidatura <span aria-hidden="true">↗</span>
           </button>
