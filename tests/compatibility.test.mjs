@@ -5,7 +5,6 @@ import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 
 const site = join(dirname(fileURLToPath(import.meta.url)), '..');
-const project = join(site, '..');
 const read = (path) => readFileSync(join(site, path), 'utf8');
 
 test('preserves the PB Cinema custom-layout contract', () => {
@@ -103,7 +102,7 @@ test('keeps cinematic media progressive and disposable', () => {
 });
 
 test('documents the React development and production preview commands', () => {
-  const guide = readFileSync(join(project, 'LEIA-ME.md'), 'utf8');
+  const guide = read('LEIA-ME.md');
   assert.match(guide, /npm install/);
   assert.match(guide, /npm run dev/);
   assert.match(guide, /npm run build/);
