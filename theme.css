@@ -1,0 +1,11 @@
+:root {
+  --bg: #0B0F14; --surface: #151C25;
+  --fundo: #0B0F14; --fundo-2: #151C25;
+  --texto: #F4F6F8; --acento: #53D6C3;
+  --text: #F4F6F8; --accent: #53D6C3;
+  --acento-texto: #0B0A09;
+  --texto-suave: color-mix(in srgb, var(--texto) 72%, transparent);
+  --linha: color-mix(in srgb, var(--texto) 12%, transparent);
+  --painel: rgb(21 28 37 / .66);
+  --mistura: lighten;
+}
