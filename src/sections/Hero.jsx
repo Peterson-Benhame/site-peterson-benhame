@@ -22,8 +22,7 @@ export default function Hero() {
         .from('.hero-title-line > span', { yPercent: 115, duration: 0.9, stagger: 0.15 }, '-=0.18')
         .from('.hero-highlight-line', { scaleX: 0, duration: 0.55, transformOrigin: 'left center', ease: 'power2.out' }, '-=0.38')
         .from('.hero-copy > p', { opacity: 0, y: 30, duration: 0.65 }, '-=0.28')
-        .from('.hero-copy .primary', { opacity: 0, y: 32, duration: 0.65 }, '-=0.42')
-        .from('.hero-meta', { opacity: 0, y: 18, duration: 0.5 }, '-=0.36')
+        .from('.hero-actions', { opacity: 0, y: 28, duration: 0.65 }, '-=0.42')
         .from('.hero-art .orbital, .hero-art .art-label, .hero-art .art-caption', {
           opacity: 0,
           y: 20,
@@ -49,8 +48,10 @@ export default function Hero() {
               <span className="hero-title-line"><span><em>passo claro.<span aria-hidden="true" className="hero-highlight-line" /></em></span></span>
             </h1>
             <p>Transforme perguntas em decisões de produto e tecnologia. Uma jornada individual para dar estrutura ao que você quer construir.</p>
-            <a className="button primary" href="#candidatura">Candidatar-me à mentoria <span aria-hidden="true">↗</span></a>
-            <span className="hero-meta">6 encontros <span>·</span> Online <span>·</span> Individual</span>
+            <div className="hero-actions">
+              <a className="button primary" href="#candidatura">Candidatar-me à mentoria <span aria-hidden="true">↗</span></a>
+              <span className="hero-meta">6 encontros <span>·</span> Online <span>·</span> Individual</span>
+            </div>
           </div>
           <div aria-hidden="true" className="hero-art">
             <div className="orbital orbital-one" />

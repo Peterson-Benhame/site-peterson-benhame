@@ -25,21 +25,52 @@ export default function FAQ() {
         scrollTrigger: { trigger: '.faq-intro', start: 'top 80%', once: true },
       });
 
-      const details = gsap.utils.toArray('.faq-list details');
+      gsap.timeline({
+        scrollTrigger: { trigger: '.faq-cabinet', start: 'top 82%', once: true },
+      })
+        .from('.faq-cabinet', {
+          opacity: 0,
+          y: 42,
+          duration: 0.75,
+          ease: 'power3.out',
+          clearProps: 'opacity,transform',
+        })
+        .from('.faq-card', {
+          opacity: 0,
+          y: 28,
+          duration: 0.58,
+          stagger: 0.08,
+          ease: 'power3.out',
+          clearProps: 'opacity,transform',
+        }, '-=0.45');
+
+      const details = gsap.utils.toArray('.faq-card');
       const cleanups = details.map((detail) => {
         const summary = detail.querySelector('summary');
-        const indicator = detail.querySelector('.detail-plus');
+        const indicator = detail.querySelector('.faq-mark');
         const toggle = (event) => {
           event.preventDefault();
           if (gsap.isTweening(detail)) return;
 
           const opening = !detail.open;
-          const startHeight = detail.offsetHeight;
+          if (opening) {
+            details.forEach((other) => {
+              if (other !== detail && other.open) {
+                other.open = false;
+                gsap.set(other, { clearProps: 'height,overflow' });
+                gsap.set(other.querySelector('.faq-mark'), { rotation: 0 });
+              }
+            });
+          }
+
+          const startHeight = summary.offsetHeight;
           if (opening) detail.open = true;
           const endHeight = opening ? detail.offsetHeight : summary.offsetHeight;
 
           gsap.set(detail, { height: startHeight, overflow: 'hidden' });
-          gsap.to(indicator, { rotation: opening ? 45 : 0, duration: 0.35, ease: 'power2.out' });
+          gsap.fromTo(indicator,
+            { rotation: opening ? 0 : 45 },
+            { rotation: opening ? 45 : 0, duration: 0.35, ease: 'power2.out' });
           gsap.to(detail, {
             height: endHeight,
             duration: 0.35,
@@ -68,13 +99,31 @@ export default function FAQ() {
         <h2 className="faq-intro-motion" id="faq-title">Antes do<br />próximo passo.</h2>
         <p className="faq-intro-motion">Clareza também sobre o que esperar da mentoria.</p>
       </div>
-      <div className="faq-list">
-        {questions.map(([question, answer]) => (
-          <details key={question}>
-            <summary>{question}<span aria-hidden="true" className="detail-plus" /></summary>
-            <p>{answer}</p>
-          </details>
-        ))}
+      <div className="faq-cabinet">
+        <div className="faq-cabinet-top" aria-hidden="true">
+          <span>ÍNDICE DE DÚVIDAS</span>
+          <span>05 ARQUIVOS</span>
+        </div>
+        <div className="faq-tray">
+          {questions.map(([question, answer], index) => (
+            <details className="faq-card" key={question} open={index === 0 ? true : undefined}>
+              <summary>
+                <span className="faq-tab" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+                <span className="faq-question-number" aria-hidden="true">Q.{String(index + 1).padStart(2, '0')}</span>
+                <span className="faq-question">{question}</span>
+                <span aria-hidden="true" className="faq-mark" />
+              </summary>
+              <div className="faq-answer">
+                <p>{answer}</p>
+              </div>
+            </details>
+          ))}
+        </div>
+        <div className="faq-drawer-front" aria-hidden="true">
+          <span className="faq-drawer-label">MENTORIA · PETERSON BENHAME</span>
+          <span className="faq-pull"><i /></span>
+          <span className="faq-drawer-code">FAQ / 05</span>
+        </div>
       </div>
     </section>
   );

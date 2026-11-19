@@ -20,11 +20,17 @@ test('registers GSAP plugins once and enables motion by default', () => {
 
 test('builds the hero entrance without animating cinematic media', () => {
   const hero = read('src/sections/Hero.jsx');
+  const css = read('style.css');
   assert.match(hero, /gsap\.timeline/);
   assert.match(hero, /hero-title-line/);
   assert.match(hero, /hero-highlight-line/);
   assert.match(hero, /power3\.out/);
   assert.doesNotMatch(hero, /\.(?:to|from|fromTo)\([^)]*(?:canvasRef|posterRef|cinema-canvas|cinema-poster)/s);
+  assert.match(hero, /className="hero-actions"/);
+  assert.match(hero, /\.from\(['"]\.hero-actions['"]/);
+  assert.doesNotMatch(hero, /\.from\(['"]\.hero-copy \.primary['"]/);
+  assert.doesNotMatch(hero, /\.from\(['"]\.hero-meta['"]/);
+  assert.match(css, /\.hero-actions\s*\{[\s\S]*?flex-direction:\s*column;[\s\S]*?gap:\s*18px;/);
 });
 
 test('animates cards and journey progress with scoped ScrollTrigger', () => {
@@ -57,6 +63,23 @@ test('keeps native details and disabled form behavior intact', () => {
   assert.match(faq, /duration:\s*0\.35/);
   assert.match(application, /disabled=\{sending \|\| !formConfig\.enabled \|\| !formConfig\.endpoint\}/);
   assert.match(application, /application-panel/);
+});
+
+test('renders the FAQ as a scoped tactile drawer without foreign UI dependencies', () => {
+  const faq = read('src/sections/FAQ.jsx');
+  const css = read('style.css');
+
+  assert.match(faq, /className="faq-cabinet/);
+  assert.match(faq, /className="faq-tray/);
+  assert.match(faq, /className="faq-card/);
+  assert.match(faq, /className="faq-tab/);
+  assert.match(faq, /className="faq-drawer-front/);
+  assert.match(faq, /aria-labelledby="faq-title"/);
+  assert.match(css, /\.faq-cabinet\s*\{/);
+  assert.match(css, /\.faq-card\s*\{/);
+  assert.match(css, /var\(--accent\)/);
+  assert.doesNotMatch(faq, /@\/components|tailwind|FaqDrawerOptions/);
+  assert.doesNotMatch(css, /data:font|base64/);
 });
 
 test('scrolls between sections with ScrollToPlugin', () => {
