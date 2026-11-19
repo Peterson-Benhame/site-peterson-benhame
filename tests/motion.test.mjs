@@ -7,14 +7,14 @@ import test from 'node:test';
 const site = join(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (path) => readFileSync(join(site, path), 'utf8');
 
-test('registers GSAP plugins once and enables motion by default', () => {
+test('registers GSAP plugins once and respects reduced motion', () => {
   assert.equal(existsSync(join(site, 'src/animations/gsapSetup.js')), true);
   const setup = read('src/animations/gsapSetup.js');
   const css = read('style.css');
   assert.match(setup, /gsap\.registerPlugin/);
   assert.match(setup, /clearProps/);
-  assert.match(setup, /motionQuery\s*=\s*['"]all['"]/);
-  assert.doesNotMatch(setup, /prefers-reduced-motion|motion=full|motion-forced/);
+  assert.match(setup, /motionQuery\s*=\s*['"]\(prefers-reduced-motion: no-preference\)['"]/);
+  assert.match(setup, /desktopMotionQuery\s*=\s*['"]\(min-width: 801px\) and \(prefers-reduced-motion: no-preference\)['"]/);
   assert.doesNotMatch(css, /@media\s*\(prefers-reduced-motion:\s*reduce\)/);
 });
 

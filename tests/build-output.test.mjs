@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 
 const site = join(dirname(fileURLToPath(import.meta.url)), '..');
-const dist = join(site, 'dist');
+const dist = join(site, process.env.BUILD_DIR || 'dist');
 
 function listFiles(directory) {
   return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
@@ -14,14 +14,14 @@ function listFiles(directory) {
   });
 }
 
-test('emits both public HTML entrypoints with relative bundles', () => {
+test('emits both public HTML entrypoints with root bundles', () => {
   for (const file of ['index.html', 'privacidade.html']) {
     assert.equal(existsSync(join(dist, file)), true, `${file} must be built`);
   }
 
   const html = readFileSync(join(dist, 'index.html'), 'utf8');
-  assert.match(html, /src="\.\/assets\/[^"/]+\.js"/);
-  assert.match(html, /href="\.\/assets\/[^"/]+\.css"/);
+  assert.match(html, /src="\/assets\/[^"/]+\.js"/);
+  assert.match(html, /href="\/assets\/[^"/]+\.css"/);
   assert.doesNotMatch(html, /(?:app\.js|form\.mjs|form-config\.js)/);
 });
 
@@ -50,12 +50,11 @@ test('emits executable JavaScript and stylesheet bundles', () => {
   assert.equal(files.some((file) => file.endsWith('.css')), true);
 });
 
-test('uses one effective hero poster URL without a second preload', () => {
+test('uses the canonical hero poster URL without a second preload', () => {
   const html = readFileSync(join(dist, 'index.html'), 'utf8');
   assert.doesNotMatch(html, /<link[^>]+rel="preload"[^>]+hero-poster/i);
-  const poster = html.match(/content="\.\/assets\/(hero-poster-[^"]+\.png)"/i)?.[1];
-  assert.ok(poster, 'the built Open Graph image must use the hashed hero poster');
+  assert.ok(html.includes(`content="${process.env.SITE_URL}/assets/img/hero-poster.png"`));
+  assert.match(html, /id="cinema-poster"[^>]+width="1672"[^>]+height="941"/);
 
-  const script = listFiles(join(dist, 'assets')).find((file) => file.endsWith('.js'));
-  assert.match(readFileSync(script, 'utf8'), new RegExp(poster.replace('.', '\\.')));
+  assert.equal(existsSync(join(dist, 'assets', 'img', 'hero-poster.png')), true);
 });

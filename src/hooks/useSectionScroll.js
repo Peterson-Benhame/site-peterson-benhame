@@ -11,6 +11,7 @@ export function useSectionScroll() {
         || event.ctrlKey
         || event.shiftKey
         || event.altKey
+        || matchMedia('(prefers-reduced-motion: reduce)').matches
       ) return;
 
       const anchor = event.target.closest('a[href*="#"]');

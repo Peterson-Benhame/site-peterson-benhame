@@ -1,7 +1,6 @@
 import { useRef } from 'react';
 import { gsap, motionQuery, useGSAP } from '../animations/gsapSetup.js';
 import { useCinemaHero } from '../hooks/useCinemaHero.js';
-import heroPosterUrl from '../../assets/img/hero-poster.png';
 
 export default function Hero() {
   const heroRef = useRef(null);
@@ -95,7 +94,7 @@ export default function Hero() {
               </g>
               <path d="m223 305 93 54 93-54M191 429l125 72 125-72" stroke="#53D6C3" strokeWidth="2" />
             </svg>
-            <img alt="" id="cinema-poster" ref={posterRef} src={heroPosterUrl} />
+            <img alt="" decoding="async" fetchPriority="high" id="cinema-poster" ref={posterRef} src="/assets/img/hero-poster.png" width="1672" height="941" />
             <canvas hidden id="cinema-canvas" ref={canvasRef} />
             <span className="art-label label-top">01 / HIPÓTESE</span>
             <span className="art-label label-middle">02 / CONEXÃO</span>
